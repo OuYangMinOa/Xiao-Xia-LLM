@@ -26,7 +26,7 @@ def ThreadPrompt(word):
     global PromptStillRunning, UPDATED_, messages
     PromptStillRunning = True
     result = model(word)
-    time.sleep(5)
+    # time.sleep(5)
     if (len(messages) >0):
         messages[-1] =  {"response":result,"Userinput":messages[-1]["Userinput"]}
         print(messages)
