@@ -11,6 +11,7 @@ from LLm import LOAD_LLM_MODEL
 
 model = lambda x:"hi"
 model = LOAD_LLM_MODEL()
+print(model("init"))
 
 app   = Flask(__name__)
 messages  = []
@@ -21,11 +22,19 @@ UPDATED_ = True # if user is updated
 def home():
     return render_template("home.html")
 
+def buildPrompt():
+    global messages
+    output = ""
+    for i in  range(len(messages)):
+        output += "Q: " + messages[i]["Userinput"]
+        if (messages[i]["response"] != "waiting ..."):
+            output += "A: " + messages[i]["response"]
+    return output
 
 def ThreadPrompt(word):
     global PromptStillRunning, UPDATED_, messages
     PromptStillRunning = True
-    result = model(word)
+    result = model(buildPrompt())
     # time.sleep(5)
     if (len(messages) >0):
         messages[-1] =  {"response":result,"Userinput":messages[-1]["Userinput"]}
@@ -95,8 +104,8 @@ def test():
 
 @app.route('/chat',methods=['POST','GET'])
 def chat():
-    global PromptStillRunning,messages
-    
+    global PromptStillRunning,messages,UPDATED_
+    UPDATED_ = True
     if request.method == "POST":
         userInput = request.form.get("userInput")
         PromptStillRunning = True
@@ -104,17 +113,10 @@ def chat():
         threading.Thread(target=ThreadPrompt,args=(userInput,),daemon=True).start()
         print(messages)
         return render_template("chat.html",messages=messages)
-        
-    
-    
-    messages_json = request.args.get('messages', [])
-    if (len(messages_json) >0):
-        print(messages_json)
-        messages = json.loads(messages_json)
-        return render_template('chat.html', messages=messages)
-    
+
+
     if (request.method == "GET"):
-        return render_template("chat.html")
+        return render_template("chat.html",messages=messages)
 
 
 if __name__ == '__main__':

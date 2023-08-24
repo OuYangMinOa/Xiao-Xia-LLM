@@ -63,16 +63,7 @@
                         setTimeout(pollForResult, 2000)
                     } else {
                         console.log("完成");
-                        fetch("/get_result")
-                        .then(response => response.json())
-                        .then(function(data) {
-                            const datajson = JSON.stringify(data)
-                            // console.log(datajson)
-                            const encodedData = encodeURIComponent(datajson);
-                            // sleep(10000);
-                            window.location.href = `/chat?messages=${encodedData}`;
-                            return;
-                        })
+                        window.location = window.location.href;
                     }
                 })
                 .catch(error => {
