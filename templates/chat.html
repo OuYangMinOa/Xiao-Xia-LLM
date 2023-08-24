@@ -13,15 +13,15 @@
         <div class="msg-inbox">
             <div class="chats">
                 <div class="msg-page" name="message" id = "message">
-                    {% for response,message in messages %}
+                    {% for item in messages %}
                         <div class="outgoing-msg">
                             <div class="outgoing-chats-msg">
-                                <p>{{ message}}</p>
+                                <p>{{ item.Userinput}}</p>
                             </div>
                         </div>
                         <div class="received-msg">
                             <div class="received-msg-inbox">
-                                <p>{{ response }}</p>
+                                <p>{{ item.response }}</p>
                             </div>
                         </div>
                     {% endfor %}
@@ -30,11 +30,11 @@
         </div>
         <div class="msg-bottom">
             <div class="input-group">
-                <form method="post">
+                <form method="post" id="myForm">
                     <input type="text" class="form-control" name="userInput" id="userInput" placeholder="Write message...">
                         <div class="input-group-append ">
                             <span class="input-group-text send-icon ">
-                                    <i class="bi bi-send "></i>
+                                    <i class="bi bi-send" id="Sendbutton"></i>
                             <span>
                         </div>
                 </form>
@@ -42,5 +42,47 @@
         </div>
     </div>
 </div>
+
+    <script>
+        
+
+        function sleep(delay) {
+            var start = new Date().getTime();
+            while (new Date().getTime() < start + delay);
+        }
+        console.log("開始循環");
+        pollForResult();
+
+        function pollForResult() {
+
+                fetch('/check_result')
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data);
+                    if (data.result == 'Not ready') {
+                        setTimeout(pollForResult, 2000)
+                    } else {
+                        console.log("完成");
+                        fetch("/get_result")
+                        .then(response => response.json())
+                        .then(function(data) {
+                            const datajson = JSON.stringify(data)
+                            // console.log(datajson)
+                            const encodedData = encodeURIComponent(datajson);
+                            // sleep(10000);
+                            window.location.href = `/chat?messages=${encodedData}`;
+                            return;
+                        })
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            }
+
+    </script>
     </body>
 </html>
+
+
+
