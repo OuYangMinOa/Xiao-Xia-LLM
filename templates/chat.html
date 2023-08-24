@@ -36,8 +36,17 @@
                             <span class="input-group-text send-icon ">
                                     <i class="bi bi-send" id="Sendbutton"></i>
                             <span>
+
+                                
+
                         </div>
                 </form>
+
+                <span class="input-group-text send-icon ">
+                    <button id="reload">reload</button>
+                <span>
+
+
             </div>
         </div>
     </div>
@@ -52,6 +61,11 @@
         }
         console.log("開始循環");
         pollForResult();
+
+        document.getElementById("reload").addEventListener("click", function(){
+            fetch('/reload').then(response => response.json())
+            window.location = window.location.href;
+        });
 
         function pollForResult() {
 

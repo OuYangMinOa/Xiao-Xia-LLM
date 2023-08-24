@@ -10,7 +10,7 @@ from LLm import LOAD_LLM_MODEL
 
 
 model = lambda x:"hi"
-model = LOAD_LLM_MODEL()
+# model = LOAD_LLM_MODEL()
 print(model("init"))
 
 app   = Flask(__name__)
@@ -50,11 +50,13 @@ def check_result():
     else:
         return jsonify({"result":"Not ready"})
     
-@app.route('/get_result', methods=['GET'])
-def get_result():
+@app.route('/reload', methods=['GET'])
+def reload():
     global PromptStillRunning, UPDATED_, messages
-    UPDATED_ = True
-    return jsonify(messages)
+    messages = []
+    PromptStillRunning = False
+    UPDATED_ = False
+    return jsonify({"status":"ok"})
 
 @app.route('/prompt',methods=['POST'])
 def prompt():
